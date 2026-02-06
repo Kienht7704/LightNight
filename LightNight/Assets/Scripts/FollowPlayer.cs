@@ -4,7 +4,7 @@ public class FollowPlayer : MonoBehaviour
 {
     // Reference to the player GameObject
     public GameObject player;
-    private Vector3 offset = new Vector3(0, 6, -9);
+    public Vector3 offset = new Vector3(0, 6, -9);
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
