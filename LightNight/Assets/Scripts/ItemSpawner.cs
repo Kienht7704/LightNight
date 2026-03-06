@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 public class ItemSpawner : MonoBehaviour
 {
-    [Header("Item Mẫu (Giấu ngoài map)")]
+    [Header("Item Base")]
     public GameObject[] itemTemplates;
 
-    [Header("Các Mốc Spawn (Transform bất kỳ)")]
-    [Tooltip("Kéo Empty Object, cục đá, góc nhà... bất cứ cái gì có Transform vào đây")]
+    [Header("Spawn location")]
     public Transform[] spawnAnchors;
 
-    [Header("Cấu hình Đếm ngược")]
+    [Header("Cooldown and max item spawn")]
     public float spawnInterval = 60f;
     public int maxItemsOnMap = 5;
 
@@ -75,8 +74,6 @@ public class ItemSpawner : MonoBehaviour
             Debug.Log($"Đã spawn {newItem.name} tại mốc {chosenAnchor.anchor.name}");
         }
     }
-
-    // --- VŨ KHÍ CỦA CHUYÊN GIA: VẼ GIZMOS TRONG EDITOR ---
     // Hàm này giúp bạn NHÌN THẤY các mốc vô hình (Empty Object) trong cửa sổ Scene
     void OnDrawGizmos()
     {
