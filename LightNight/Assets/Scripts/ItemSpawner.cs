@@ -1,84 +1,97 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ItemSpawnManager : MonoBehaviour
+public class ItemSpawner : MonoBehaviour
 {
-    [Header("Cấu hình Item")]
-    [Tooltip("Danh sách các Prefab item bạn muốn spawn")]
-    public GameObject[] itemPrefabs;
+    [Header("Item Mẫu (Giấu ngoài map)")]
+    public GameObject[] itemTemplates;
 
-    [Header("Cấu hình Spawn")]
-    public float spawnInterval = 60f; // Thời gian hồi 60 giây
-    public int maxItemsOnMap = 5;    
-    public Transform[] spawnPoints;  // Các vị trí có thể xuất hiện item
+    [Header("Các Mốc Spawn (Transform bất kỳ)")]
+    [Tooltip("Kéo Empty Object, cục đá, góc nhà... bất cứ cái gì có Transform vào đây")]
+    public Transform[] spawnAnchors;
 
-    // Danh sách để theo dõi các item đang tồn tại trên map
-    private List<GameObject> _activeItems = new List<GameObject>();
-    private float _nextSpawnTime;
+    [Header("Cấu hình Đếm ngược")]
+    public float spawnInterval = 60f;
+    public int maxItemsOnMap = 5;
+
+    private float _timer;
+
+    // Đổi tên thành SpawnNode để thể hiện nó có thể là bất cứ vị trí nào
+    private class SpawnNode
+    {
+        public Transform anchor;
+        public GameObject currentItem;
+    }
+
+    private List<SpawnNode> _spawnNodes = new List<SpawnNode>();
 
     void Start()
     {
-        // Lần spawn đầu tiên sẽ diễn ra sau 60s kể từ khi bắt đầu
-        _nextSpawnTime = Time.time + spawnInterval;
+        foreach (Transform t in spawnAnchors)
+        {
+            if (t != null)
+            {
+                _spawnNodes.Add(new SpawnNode { anchor = t, currentItem = null });
+            }
+        }
+        _timer = spawnInterval;
     }
 
     void Update()
     {
-        // 1. Kiểm tra thời gian hồi
-        if (Time.time >= _nextSpawnTime)
+        _timer -= Time.deltaTime;
+
+        if (_timer <= 0f)
         {
-            // 2. Kiểm tra số lượng tối đa
-            // Trước khi kiểm tra, hãy dọn dẹp danh sách (loại bỏ các item đã bị người chơi nhặt/Destroy)
-            CleanActiveItemsList();
-
-            if (_activeItems.Count < maxItemsOnMap)
-            {
-                SpawnRandomItem();
-            }
-
-            // Thiết lập mốc thời gian tiếp theo (ngay cả khi không spawn được do đầy, bộ đếm vẫn chạy)
-            _nextSpawnTime = Time.time + spawnInterval;
+            TrySpawnItem();
+            _timer = spawnInterval;
         }
     }
 
-    void SpawnRandomItem()
+    void TrySpawnItem()
     {
-        if (itemPrefabs.Length == 0 || spawnPoints.Length == 0) return;
+        if (itemTemplates.Length == 0 || spawnAnchors.Length == 0) return;
 
-        // Chọn ngẫu nhiên 1 item trong danh sách
-        GameObject randomPrefab = itemPrefabs[Random.Range(0, itemPrefabs.Length)];
+        int activeItemCount = 0;
+        List<SpawnNode> freeAnchors = new List<SpawnNode>();
 
-        // Chọn ngẫu nhiên 1 vị trí trong danh sách spawn points
-        Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-
-        // Tạo Item
-        GameObject newItem = Instantiate(randomPrefab, randomPoint.position, randomPoint.rotation);
-
-        // Thêm vào danh sách quản lý
-        _activeItems.Add(newItem);
-
-        Debug.Log($"Đã spawn: {newItem.name}. Số lượng hiện tại: {_activeItems.Count}/{maxItemsOnMap}");
-    }
-
-    // Hàm này giúp dọn dẹp các tham chiếu "null" khi Item đã bị Destroy trong lúc chơi
-    void CleanActiveItemsList()
-    {
-        for (int i = _activeItems.Count - 1; i >= 0; i--)
+        foreach (var node in _spawnNodes)
         {
-            if (_activeItems[i] == null)
-            {
-                _activeItems.RemoveAt(i);
-            }
+            if (node.currentItem != null) activeItemCount++;
+            else freeAnchors.Add(node);
+        }
+
+        if (activeItemCount < maxItemsOnMap && freeAnchors.Count > 0)
+        {
+            SpawnNode chosenAnchor = freeAnchors[Random.Range(0, freeAnchors.Count)];
+            GameObject chosenTemplate = itemTemplates[Random.Range(0, itemTemplates.Length)];
+
+            GameObject newItem = Instantiate(chosenTemplate, chosenAnchor.anchor.position, chosenAnchor.anchor.rotation);
+            newItem.SetActive(true);
+
+            // Khóa mốc này lại
+            chosenAnchor.currentItem = newItem;
+
+            Debug.Log($"Đã spawn {newItem.name} tại mốc {chosenAnchor.anchor.name}");
         }
     }
 
-    // (Tùy chọn) Hiển thị thời gian còn lại ra màn hình Console để debug
-    void OnGUI()
+    // --- VŨ KHÍ CỦA CHUYÊN GIA: VẼ GIZMOS TRONG EDITOR ---
+    // Hàm này giúp bạn NHÌN THẤY các mốc vô hình (Empty Object) trong cửa sổ Scene
+    void OnDrawGizmos()
     {
-        float timeLeft = _nextSpawnTime - Time.time;
-        if (timeLeft > 0)
+        if (spawnAnchors == null) return;
+
+        // Cài đặt màu xanh lá cây hơi trong suốt
+        Gizmos.color = new Color(0, 1, 0, 0.5f);
+
+        foreach (Transform t in spawnAnchors)
         {
-            GUILayout.Label($"Tiếp tục spawn sau: {timeLeft:F1}s | Hiện tại: {_activeItems.Count}/{maxItemsOnMap}");
+            if (t != null)
+            {
+                // Vẽ một hình cầu ảo tại vị trí mốc để dễ căn chỉnh
+                Gizmos.DrawWireSphere(t.position, 1f);
+            }
         }
     }
 }
