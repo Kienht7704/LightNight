@@ -5,4 +5,5 @@
   <Project Path="Unity.Splines.Examples.Editor.csproj" />
   <Project Path="SplineMesh.Editor.csproj" />
   <Project Path="SplineMesh.Runtime.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>
