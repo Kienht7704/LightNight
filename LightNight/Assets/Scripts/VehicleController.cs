@@ -92,8 +92,8 @@ public class VehicleController : MonoBehaviour
 
     private void HandleMotorAndSpeed()
     {
-        float currentSpeedKmh = _rb.velocity.magnitude * 3.6f;
-        float moveDirection = Vector3.Dot(transform.forward, _rb.velocity);
+        float currentSpeedKmh = _rb.linearVelocity.magnitude * 3.6f;
+        float moveDirection = Vector3.Dot(transform.forward, _rb.linearVelocity);
         float currentTorque = 0f;
 
         if (_vInput > 0) // Nhấn W (Tiến)
