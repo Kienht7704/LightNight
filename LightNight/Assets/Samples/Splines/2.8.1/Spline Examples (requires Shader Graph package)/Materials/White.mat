@@ -1,7 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
-<<<<<<< HEAD
-=======
 --- !u!114 &-9083797308559070265
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -15,7 +13,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
->>>>>>> ea2f811 (Update)
 --- !u!114 &-7378356681568671944
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -29,7 +26,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 0
-<<<<<<< HEAD
 --- !u!114 &-1782607843380156102
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -43,8 +39,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
-=======
->>>>>>> ea2f811 (Update)
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
