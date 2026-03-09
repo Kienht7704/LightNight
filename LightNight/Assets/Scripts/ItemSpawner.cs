@@ -10,7 +10,7 @@ public class ItemSpawner : MonoBehaviour
     public Transform[] spawnAnchors;
 
     [Header("Cooldown and max item spawn")]
-    public float spawnInterval = 60f;
+    public float spawnInterval = 15f;
     public int maxItemsOnMap = 5;
 
     private float _timer;
