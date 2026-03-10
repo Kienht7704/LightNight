@@ -10,7 +10,7 @@ using System.Collections.Generic;
 public class LobbyUI : MonoBehaviour
 {
     [Header("Tên Scene Đua để Load")]
-    public string raceSceneName = "Prototype 2";
+    public string raceSceneName = "Prototype 1";
 
     [Header("Camera Rotate (tùy chọn)")]
     public Transform backgroundCar;
