@@ -14,8 +14,8 @@ public class TimerUI : MonoBehaviour
 
     void Awake()
     {
-        // Khởi tạo Singleton
-        if (Instance == null) Instance = this;
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
     }
 
     void Start()

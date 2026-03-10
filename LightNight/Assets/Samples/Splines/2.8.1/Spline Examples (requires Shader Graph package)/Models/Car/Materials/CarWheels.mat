@@ -26,8 +26,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 0
-<<<<<<< HEAD
-=======
 --- !u!114 &-5234196801119387998
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -41,7 +39,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
->>>>>>> ea2f811 (Update)
+ea2f811 (Update)
 --- !u!21 &2100000
 Material:
   serializedVersion: 8

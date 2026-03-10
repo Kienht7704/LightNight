@@ -29,6 +29,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        transform.SetParent(null); // Giải quyết lỗi DontDestroyOnLoad only works for root
         DontDestroyOnLoad(gameObject);
 
         // Khởi tạo hệ thống Unity Gaming Services
@@ -71,8 +72,9 @@ public class LobbyManager : MonoBehaviour
 
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             if (transport == null) {
-                OnError?.Invoke("NetworkManager thiếu UnityTransport!");
-                return;
+                Debug.Log("[LobbyManager] Tu dong fix loi thieu UnityTransport...");
+                transport = NetworkManager.Singleton.gameObject.AddComponent<UnityTransport>();
+                NetworkManager.Singleton.NetworkConfig.NetworkTransport = transport;
             }
 
             transport.SetHostRelayData(
@@ -116,8 +118,9 @@ public class LobbyManager : MonoBehaviour
 
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             if (transport == null) {
-                OnError?.Invoke("NetworkManager thiếu UnityTransport!");
-                return;
+                Debug.Log("[LobbyManager] Tu dong fix loi thieu UnityTransport...");
+                transport = NetworkManager.Singleton.gameObject.AddComponent<UnityTransport>();
+                NetworkManager.Singleton.NetworkConfig.NetworkTransport = transport;
             }
 
             transport.SetClientRelayData(

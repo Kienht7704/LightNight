@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
-=======
->>>>>>> ea2f811 (Update)
 --- !u!114 &-1555066897059505012
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -137,8 +135,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
-<<<<<<< HEAD
-=======
 --- !u!114 &6873202724662151061
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -152,4 +148,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
->>>>>>> ea2f811 (Update)

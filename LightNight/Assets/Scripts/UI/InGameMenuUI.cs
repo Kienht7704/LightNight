@@ -38,9 +38,14 @@ public class InGameMenuUI : MonoBehaviour
         RectTransform bg = UITheme.CreateFullScreen(_canvas.transform, "MenuBg", new Color(0, 0, 0, 0.7f));
         _root = bg.gameObject;
 
-        // Card Menu: Cao 480, Rộng 420
-        _card = UITheme.CreateCard(bg, "MenuCard", 420f, 480f);
-        UITheme.CreateHeaderBand(_card, "* TAM DUNG TRO CHOI *", 38f);
+        // === Nền Sài Gòn về đêm ===
+        UITheme.NightStars(bg, 15);
+        UITheme.SaigonSkyline(bg);
+        UITheme.CityFog(bg);
+
+        // Card Menu
+        _card = UITheme.CreateCard(bg, "MenuCard", 380f, 440f);
+        UITheme.CreateHeaderBand(_card, "\u2605 TẠM DỪNG TRÒ CHƠI \u2605", 38f);
 
         GameObject ct = new GameObject("Content");
         ct.transform.SetParent(_card, false);
@@ -51,7 +56,7 @@ public class InGameMenuUI : MonoBehaviour
         UITheme.VLayout(ct, 16f, new RectOffset(32, 32, 28, 28));
 
         // Title
-        var title = UITheme.MakeText(ct.transform, "Title", "TAM DUNG", UITheme.HeadingSize, UITheme.ElectricCyan);
+        var title = UITheme.MakeText(ct.transform, "Title", "TẠM DỪNG", UITheme.HeadingSize, UITheme.ElectricCyan);
         title.fontStyle = FontStyles.Bold;
         UITheme.PH(title.gameObject, 50f);
 
@@ -65,7 +70,7 @@ public class InGameMenuUI : MonoBehaviour
         UITheme.PH(sp1.gameObject, 10f);
 
         // Button Continue
-        Button btnContinue = UITheme.MakeButton(ct.transform, "ContinueBtn", "TIEP TUC", UITheme.VietnamRed, UITheme.RoyalGold, 0, 55f);
+        Button btnContinue = UITheme.MakeButton(ct.transform, "ContinueBtn", "TIẾP TỤC", UITheme.VietnamRed, UITheme.RoyalGold, 0, 55f);
         btnContinue.onClick.AddListener(ToggleMenu);
         UITheme.PH(btnContinue.gameObject, 55f);
 
@@ -74,8 +79,12 @@ public class InGameMenuUI : MonoBehaviour
         UITheme.PH(sp2.gameObject, 5f);
 
         // Button Settings
-        Button btnSettings = UITheme.MakeButton(ct.transform, "SettingsBtn", "CAI DAT", new Color32(0, 245, 255, 28), UITheme.ElectricCyan, 0, 55f);
-        btnSettings.GetComponent<Outline>().effectColor = new Color32(0, 245, 255, 80);
+        Button btnSettings = UITheme.MakeButton(ct.transform, "SettingsBtn", "CÀI ĐẶT", new Color32(0, 245, 255, 28), UITheme.ElectricCyan, 0, 55f);
+        if (btnSettings.TryGetComponent<Outline>(out var outlineSettings))
+            outlineSettings.effectColor = new Color32(0, 245, 255, 80);
+        btnSettings.onClick.AddListener(() => {
+            Debug.LogWarning("TNH NANG CAI DAT DANG DUOC PHAT TRIEN...");
+        });
         UITheme.PH(btnSettings.gameObject, 55f);
 
         // Chỗ trống nhỏ
@@ -83,8 +92,9 @@ public class InGameMenuUI : MonoBehaviour
         UITheme.PH(sp3.gameObject, 5f);
 
         // Button Exit
-        Button btnExit = UITheme.MakeButton(ct.transform, "ExitBtn", "THOAT GAME", new Color32(0, 0, 0, 0), UITheme.TextGold, 0, 55f);
-        btnExit.GetComponent<Outline>().effectColor = new Color32(200, 180, 140, 40);
+        Button btnExit = UITheme.MakeButton(ct.transform, "ExitBtn", "THOÁT GAME", new Color32(0, 0, 0, 0), UITheme.TextGold, 0, 55f);
+        if (btnExit.TryGetComponent<Outline>(out var outlineExit))
+            outlineExit.effectColor = new Color32(200, 180, 140, 40);
         btnExit.onClick.AddListener(ExitGame);
         UITheme.PH(btnExit.gameObject, 55f);
     }
@@ -109,7 +119,7 @@ public class InGameMenuUI : MonoBehaviour
         Time.timeScale = 1f; // Phục hồi Time Scale trước khi load
         
         // Ngắt kết nối Network/Lobby
-        var mgr = FindAnyObjectByType<LobbyManager>();
+        var mgr = UnityEngine.Object.FindAnyObjectByType<LobbyManager>();
         if (mgr != null) mgr.Disconnect();
         
         // Load lại màn hình Lobby (Giả sử build index 0 là Menu)

@@ -17,6 +17,8 @@ public class WheelAnimator : MonoBehaviour
     private Vector3 lastPosition;
     private VehicleController vehicle;
 
+    private float currentRollAngle = 0f;
+
     void Start()
     {
         lastPosition = transform.position;
@@ -26,6 +28,8 @@ public class WheelAnimator : MonoBehaviour
 
     void Update()
     {
+        // Tránh xung đột nếu VehicleController đã tự quay bánh xe
+        if (vehicle != null) return;
         // 1. ANIAMTION BÁNH LĂN KHI XE TIẾN / LÙI
         // Tính quãng đường xe vừa di chuyển trong frame này
         float distanceMoved = Vector3.Distance(transform.position, lastPosition);
@@ -44,27 +48,17 @@ public class WheelAnimator : MonoBehaviour
         lastPosition = transform.position;
 
         // 2. ANIMATION BÁNH TRƯỚC BẺ LÁI KHI RẼ TRÁI / PHẢI
-        if (vehicle != null && vehicle.IsOwner)
-        {
-            float steerInput = 0f;
-            if (Input.GetKey(KeyCode.A)) steerInput = -1f;
-            if (Input.GetKey(KeyCode.D)) steerInput = 1f;
+        float steerInput = 0f;
+        if (Input.GetKey(KeyCode.A)) steerInput = -1f;
+        if (Input.GetKey(KeyCode.D)) steerInput = 1f;
 
-            // Xoay 2 bánh trước theo trục Y
-            float currentSteerAngle = steerInput * maxSteerAngle;
-            //hi
-            if (leftFrontWheel != null)
-            {
-                Vector3 localEuler = leftFrontWheel.localEulerAngles;
-                localEuler.y = currentSteerAngle;
-                leftFrontWheel.localEulerAngles = localEuler;
-            }
-            if (rightFrontWheel != null)
-            {
-                Vector3 localEuler = rightFrontWheel.localEulerAngles;
-                localEuler.y = currentSteerAngle;
-                rightFrontWheel.localEulerAngles = localEuler;
-            }
-        }
+        // Tính góc lăn và góc rẽ
+        currentRollAngle += rotationAmount;
+        float currentSteerAngle = steerInput * maxSteerAngle;
+
+        Quaternion frontRotation = Quaternion.Euler(currentRollAngle, currentSteerAngle, 0f);
+
+        if (leftFrontWheel != null) leftFrontWheel.localRotation = frontRotation;
+        if (rightFrontWheel != null) rightFrontWheel.localRotation = frontRotation;
     }
 }

@@ -11,24 +11,24 @@ using System.Collections;
 public class LoadingScreenUI : MonoBehaviour
 {
     private static readonly string[] Tips = {
-        "Landmark 81 - toa nha cao nhat Viet Nam, 461m",
-        "Nha tho Duc Ba - bieu tuong 135 nam lich su Sai Gon",
-        "Cho Ben Thanh - trai tim thuong mai TP.HCM",
-        "Bitexco Tower - thap tai chinh bieu tuong Sai Gon",
-        "Cau Phu My - cau day vang lon nhat TP.HCM",
-        "Dinh Doc Lap - chung nhan lich su thong nhat dat nuoc",
-        "Buu dien Trung tam - kien truc Phap hon 130 nam tuoi",
+        "Landmark 81 - tòa nhà cao nhất Việt Nam, 461m",
+        "Nhà thờ Đức Bà - biểu tượng 135 năm lịch sử Sài Gòn",
+        "Chợ Bến Thành - trái tim thương mại TP.HCM",
+        "Bitexco Tower - tháp tài chính biểu tượng Sài Gòn",
+        "Cầu Phú Mỹ - cầu dây văng lớn nhất TP.HCM",
+        "Dinh Độc Lập - chứng nhân lịch sử thống nhất đất nước",
+        "Bưu điện Trung tâm - kiến trúc Pháp hơn 130 năm tuổi",
     };
 
     private static readonly string[] Msgs = {
-        "Dang khoi dong dong co tai Dinh Doc Lap...",
-        "Nap du lieu Landmark 81...",
-        "Dang don duong qua Nha tho Duc Ba...",
-        "Kiem tra phanh truoc Cho Ben Thanh...",
-        "Dang di qua ham Thu Thiem...",
-        "Chuan bi duong dua ven song Sai Gon...",
-        "San sang drift quanh Bitexco...",
-        "Khoi dong he thong den neon thanh pho...",
+        "Đang khởi động động cơ tại Dinh Độc Lập...",
+        "Nạp dữ liệu Landmark 81...",
+        "Đang dọn đường qua Nhà thờ Đức Bà...",
+        "Kiểm tra phanh trước Chợ Bến Thành...",
+        "Đang đi qua hầm Thủ Thiêm...",
+        "Chuẩn bị đường đua ven sông Sài Gòn...",
+        "Sẵn sàng drift quanh Bitexco...",
+        "Khởi động hệ thống đèn neon thành phố...",
     };
 
     private Canvas          _canvas;
@@ -56,15 +56,24 @@ public class LoadingScreenUI : MonoBehaviour
     // ============================================================
     //  PUBLIC API
     // ============================================================
-    public void LoadScene(string scene, bool isHost = false, string player = null)
+    public void ShowLoadingForNetwork(bool isHost = false, string player = null)
     {
         Build();
         _root.SetActive(true);
         _root.transform.SetAsLastSibling();
-        _playerTxt.text = "Tay dua: " + Resolve(player);
-        _statusTxt.text = isHost ? "SERVER DANG CHAY - CHO NGUOI CHOI" : "DANG KET NOI VAN HOST";
+        _playerTxt.text = "Tay đua: " + Resolve(player);
+        _statusTxt.text = isHost ? "SERVER ĐANG CHẠY - CHỜ NGƯỜI CHƠI" : "ĐANG KẾT NỐI VỚI HOST";
         StartCoroutine(UITheme.SlideIn(_card, 0.42f, 0.05f, 300f));
-        StartCoroutine(LoadAsync(scene));
+    }
+
+    // Hàm public mới để Controller khác có thể update thanh trượt
+    public void SetProgress(float v)
+    {
+        if (_root != null && _root.activeSelf)
+        {
+            _prog = Mathf.Clamp01(v);
+            UpdateBar(_prog);
+        }
     }
 
     public void ShowConnecting(string player = null)
@@ -72,8 +81,8 @@ public class LoadingScreenUI : MonoBehaviour
         Build();
         _root.SetActive(true);
         _root.transform.SetAsLastSibling();
-        _playerTxt.text = "Tay dua: " + Resolve(player);
-        _statusTxt.text = "DANG KET NOI VOI HOST";
+        _playerTxt.text = "Tay đua: " + Resolve(player);
+        _statusTxt.text = "ĐANG KẾT NỐI VỚI HOST";
         StartCoroutine(UITheme.SlideIn(_card, 0.42f, 0.05f, 300f));
         StartCoroutine(ConnectLoop());
     }
@@ -93,13 +102,18 @@ public class LoadingScreenUI : MonoBehaviour
         if (_built) return;
         _built = true;
 
-        _canvas = FindAnyObjectByType<Canvas>();
+        _canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
         if (!_canvas) _canvas = UITheme.CreateCanvas("LoadCanvas");
 
         // Nền
         RectTransform bg = UITheme.CreateFullScreen(_canvas.transform, "LoadRoot",
             UITheme.HeritageBlue);
         _root = bg.gameObject;
+
+        // === Nền Sài Gòn về đêm ===
+        UITheme.NightStars(bg, 20);
+        UITheme.SaigonSkyline(bg);
+        UITheme.CityFog(bg);
 
         // Speed lines (nhiều và nhanh)
         float[] yp = { 0.08f,0.18f,0.28f,0.40f,0.50f,0.60f,0.72f,0.82f,0.92f };
@@ -120,8 +134,8 @@ public class LoadingScreenUI : MonoBehaviour
         SimpleDragon(bg, 0.03f);
 
         // ====== CARD ======
-        _card = UITheme.CreateCard(bg, "LoadCard", 500f, 530f);
-        UITheme.CreateHeaderBand(_card, "* DANG KHOI DONG DUONG DUA *", 38f);
+        _card = UITheme.CreateCard(bg, "LoadCard", 440f, 480f);
+        UITheme.CreateHeaderBand(_card, "\u2605 ĐANG KHỞI ĐỘNG ĐƯỜNG ĐUA \u2605", 38f);
 
         // Content
         GameObject ct = new GameObject("Content");
@@ -144,13 +158,13 @@ public class LoadingScreenUI : MonoBehaviour
 
         // Subtitle  (h=16)
         var sub = UITheme.MakeText(ct.transform, "Sub",
-            "SAI GON RACING", UITheme.TinySize, UITheme.TextGold);
+            "SÀI GÒN RACING", UITheme.TinySize, UITheme.TextGold);
         sub.characterSpacing = 3f;
         UITheme.PH(sub.gameObject, 16f);
 
         // Player name  (h=20)
         _playerTxt = UITheme.MakeText(ct.transform, "Pl",
-            "Tay dua: username", UITheme.SmallSize, UITheme.ElectricCyan);
+            "Tay đua: username", UITheme.SmallSize, UITheme.ElectricCyan);
         UITheme.PH(_playerTxt.gameObject, 20f);
 
         // Divider  (h=10)
@@ -198,7 +212,7 @@ public class LoadingScreenUI : MonoBehaviour
         UITheme.PH(tb, 60f);
 
         var tipLbl = UITheme.MakeText(tb.transform, "TL",
-            "[!] BAN CO BIET?", UITheme.TinySize, new Color32(255,150,150,150));
+            "[!] BẠN CÓ BIẾT?", UITheme.TinySize, new Color32(255,150,150,150));
         tipLbl.alignment = TextAlignmentOptions.Left;
         UITheme.PH(tipLbl.gameObject, 14f);
 
@@ -212,7 +226,7 @@ public class LoadingScreenUI : MonoBehaviour
 
         // Cancel  (h=36)
         Button can = UITheme.MakeButton(ct.transform, "CanBtn",
-            "HUY", new Color32(0,0,0,0), UITheme.TextGold, 0, 36f);
+            "HỦY", new Color32(0,0,0,0), UITheme.TextGold, 0, 36f);
         can.GetComponent<Outline>().effectColor = new Color32(200,180,140,40);
         can.onClick.AddListener(OnCancel);
         UITheme.PH(can.gameObject, 36f);
@@ -221,43 +235,7 @@ public class LoadingScreenUI : MonoBehaviour
     // ============================================================
     //  COROUTINES
     // ============================================================
-    private IEnumerator LoadAsync(string scene)
-    {
-        _prog = 0f;
-        float elapsed = 0f;
-        float minTime = 2.5f;
-        int mIdx = 0; float mTimer = 0;
-
-        AsyncOperation op = SceneManager.LoadSceneAsync(scene);
-        if (op == null)
-        {
-            _tipTxt.text = "LOI: Khong tim thay scene '" + scene + "'!";
-            _statusTxt.text = "[!] LOI LOAD";
-            yield break;
-        }
-        op.allowSceneActivation = false;
-
-        while (!op.isDone)
-        {
-            elapsed += Time.deltaTime;
-            float real = Mathf.Clamp01(op.progress / 0.9f);
-            float target = Mathf.Max(real, elapsed / minTime);
-            _prog = Mathf.MoveTowards(_prog, Mathf.Clamp01(target), Time.deltaTime * 0.55f);
-
-            UpdateBar(_prog);
-
-            mTimer += Time.deltaTime;
-            if (mTimer > 1.8f) { mTimer=0; mIdx=(mIdx+1)%Msgs.Length; _msgTxt.text = Msgs[mIdx]; }
-
-            if (real >= 1f && elapsed >= minTime && _prog >= 0.98f)
-            {
-                UpdateBar(1f);
-                yield return new WaitForSeconds(0.4f);
-                op.allowSceneActivation = true;
-            }
-            yield return null;
-        }
-    }
+    // XÓA HÀM LoadAsync ĐỂ TRÁNH TRÙNG VỚI NetworkManager
 
     private IEnumerator ConnectLoop()
     {
@@ -313,14 +291,20 @@ public class LoadingScreenUI : MonoBehaviour
                 _bgLines[i].anchoredPosition = p;
             }
         }
+
+        // Tự chuyển thông điệp
+        _msgTimer += Time.deltaTime;
+        if (_msgTimer > 1.8f) { _msgTimer=0; _msgIdx=(_msgIdx+1)%Msgs.Length; if(_msgTxt) _msgTxt.text = Msgs[_msgIdx]; }
+
+        // Tự đổi tip
+        _tipTimer += Time.deltaTime;
+        if (_tipTimer > 2.5f) RotateTip();
     }
 
     private void UpdateBar(float v)
     {
         _bar.value = v;
         _pctTxt.text = Mathf.RoundToInt(v * 100f) + "%";
-        _tipTimer += Time.deltaTime;
-        if (_tipTimer > 2.5f) RotateTip();
     }
 
     private void RotateTip()
@@ -334,7 +318,7 @@ public class LoadingScreenUI : MonoBehaviour
     {
         StopAllCoroutines();
         Hide();
-        var lb = FindAnyObjectByType<LobbyUI>();
+        var lb = UnityEngine.Object.FindAnyObjectByType<LobbyUI>();
         if (lb) lb.gameObject.SetActive(true);
     }
 

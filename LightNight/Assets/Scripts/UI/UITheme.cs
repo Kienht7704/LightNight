@@ -69,7 +69,7 @@ public static class UITheme
         CanvasScaler cs = go.AddComponent<CanvasScaler>();
         cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         cs.referenceResolution = new Vector2(1920, 1080);
-        cs.matchWidthOrHeight = 0.5f;
+        cs.matchWidthOrHeight = 0.65f; // Cân bằng giữa chiều rộng & cao, tối ưu cho Laptop 16:9/16:10
         go.AddComponent<GraphicRaycaster>();
         return c;
     }
@@ -117,6 +117,9 @@ public static class UITheme
         Corner(go.transform, "BR", new Vector2(1,0), new Vector2(-8, 8));
         return r;
     }
+
+ 
+
 
     private static void Corner(Transform p, string id, Vector2 a, Vector2 off)
     {
@@ -178,7 +181,7 @@ public static class UITheme
         t.fontSize = size;
         t.color = color ?? TextWhite;
         t.alignment = align;
-        t.enableWordWrapping = false;
+        t.textWrappingMode = TextWrappingModes.NoWrap;
         t.overflowMode = TextOverflowModes.Truncate;
         t.richText = false;
         t.raycastTarget = false;
@@ -214,7 +217,7 @@ public static class UITheme
         TextMeshProUGUI t = MakeText(go.transform, "L", label, ButtonSize, textCol);
         t.fontStyle = FontStyles.Bold;
         t.characterSpacing = 2f;
-        t.enableWordWrapping = false;
+        t.textWrappingMode = TextWrappingModes.NoWrap;
         RectTransform tr = t.GetComponent<RectTransform>();
         tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
         tr.sizeDelta = Vector2.zero; tr.anchoredPosition = Vector2.zero;
@@ -260,7 +263,7 @@ public static class UITheme
         tt.color = bc;
         tt.alignment = TextAlignmentOptions.MidlineLeft;
         tt.richText = false;
-        tt.enableWordWrapping = false;
+        tt.textWrappingMode = TextWrappingModes.NoWrap;
 
         // Placeholder
         GameObject pg = new GameObject("P");
@@ -275,7 +278,7 @@ public static class UITheme
         pt.fontStyle = FontStyles.Italic;
         pt.alignment = TextAlignmentOptions.MidlineLeft;
         pt.richText = false;
-        pt.enableWordWrapping = false;
+        pt.textWrappingMode = TextWrappingModes.NoWrap;
 
         TMP_InputField field = go.AddComponent<TMP_InputField>();
         field.textViewport  = tar;
@@ -468,5 +471,108 @@ public static class UITheme
         cen.AddComponent<Image>().color = c;
 
         return r;
+    }
+
+    /// <summary>
+    /// Tạo dải skyline thành phố Sài Gòn (hình chữ nhật mô phỏng các tòa nhà) ở đáy màn hình.
+    /// </summary>
+    public static void SaigonSkyline(Transform parent, float baseY = 0f)
+    {
+        // Mảng chiều cao các "tòa nhà" - mô phỏng Bitexco, Landmark 81, nhà thờ Đức Bà...
+        float[] heights = { 60,40,90,35,55,130,45,70,35,50,170,40,65,45,80,55,35,95,50,40,60,45,75,35,110 };
+        float totalW = 1920f;
+        float bw = totalW / heights.Length;
+
+        for (int i = 0; i < heights.Length; i++)
+        {
+            GameObject b = new GameObject($"Bld{i}");
+            b.transform.SetParent(parent, false);
+            RectTransform r = b.AddComponent<RectTransform>();
+            r.anchorMin = new Vector2((float)i / heights.Length, 0f);
+            r.anchorMax = new Vector2((float)(i + 1) / heights.Length, 0f);
+            r.pivot = new Vector2(0.5f, 0f);
+            r.sizeDelta = new Vector2(-2f, heights[i] + baseY);
+            r.anchoredPosition = Vector2.zero;
+            Image img = b.AddComponent<Image>();
+            // Sáng tối xen kẽ tạo cảm giác chiều sâu
+            float v = (i % 3 == 0) ? 0.08f : (i % 3 == 1) ? 0.05f : 0.12f;
+            img.color = new Color(v, v * 1.2f, v * 1.8f, 0.7f);
+            img.raycastTarget = false;
+
+            // Thêm "cửa sổ" sáng ngẫu nhiên
+            int windows = (int)(heights[i] / 18f);
+            for (int w = 0; w < windows; w++)
+            {
+                if (Random.value < 0.4f) continue; // Một số cửa sổ tối
+                GameObject win = new GameObject("W");
+                win.transform.SetParent(b.transform, false);
+                RectTransform wr = win.AddComponent<RectTransform>();
+                wr.anchorMin = wr.anchorMax = new Vector2(Random.Range(0.15f, 0.85f), (float)w / windows + 0.05f);
+                wr.sizeDelta = new Vector2(Random.Range(3f, 6f), Random.Range(3f, 5f));
+                Image wi = win.AddComponent<Image>();
+                wi.color = new Color(1f, 0.9f, 0.5f, Random.Range(0.15f, 0.5f));
+                wi.raycastTarget = false;
+            }
+        }
+
+        // Bitexco "chóp" đặc biệt giữa màn hình
+        GameObject spire = new GameObject("Spire");
+        spire.transform.SetParent(parent, false);
+        RectTransform sr = spire.AddComponent<RectTransform>();
+        sr.anchorMin = sr.anchorMax = new Vector2(0.44f, 0f);
+        sr.pivot = new Vector2(0.5f, 0f);
+        sr.sizeDelta = new Vector2(8f, 200f);
+        sr.anchoredPosition = Vector2.zero;
+        Image si = spire.AddComponent<Image>();
+        si.color = new Color(0.15f, 0.2f, 0.35f, 0.6f);
+        si.raycastTarget = false;
+    }
+
+    /// <summary>
+    /// Tạo nhiều ngôi sao nhấp nháy trên nền trời đêm.
+    /// </summary>
+    public static void NightStars(Transform parent, int count = 30)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            GameObject s = new GameObject($"Star{i}");
+            s.transform.SetParent(parent, false);
+            RectTransform r = s.AddComponent<RectTransform>();
+            r.anchorMin = r.anchorMax = new Vector2(Random.Range(0.02f, 0.98f), Random.Range(0.25f, 0.97f));
+            float sz = Random.Range(1.5f, 4f);
+            r.sizeDelta = new Vector2(sz, sz);
+            Image img = s.AddComponent<Image>();
+            img.color = new Color(1f, 1f, 0.9f, Random.Range(0.15f, 0.55f));
+            img.raycastTarget = false;
+        }
+    }
+
+    /// <summary>
+    /// Tạo neon line chạy ngang (hiệu ứng đèn đô thị đêm).
+    /// </summary>
+    public static RectTransform NeonLine(Transform parent, float yAnchor, Color col, float alpha = 0.12f)
+    {
+        Color c = col; c.a = alpha;
+        var ln = Divider(parent, "Neon", 0, 2f, c);
+        ln.anchorMin = new Vector2(0f, yAnchor);
+        ln.anchorMax = new Vector2(1f, yAnchor);
+        ln.sizeDelta = new Vector2(0, 2f);
+        return ln;
+    }
+
+    /// <summary>
+    /// Tạo dải gradient mờ ở đáy (hiệu ứng sương mù thành phố).
+    /// </summary>
+    public static void CityFog(Transform parent)
+    {
+        GameObject fog = new GameObject("CityFog");
+        fog.transform.SetParent(parent, false);
+        RectTransform r = fog.AddComponent<RectTransform>();
+        r.anchorMin = Vector2.zero;
+        r.anchorMax = new Vector2(1f, 0.18f);
+        r.offsetMin = r.offsetMax = Vector2.zero;
+        Image img = fog.AddComponent<Image>();
+        img.color = new Color(0.02f, 0.04f, 0.12f, 0.85f);
+        img.raycastTarget = false;
     }
 }
