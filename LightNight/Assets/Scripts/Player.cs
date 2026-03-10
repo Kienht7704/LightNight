@@ -78,9 +78,8 @@ public class Player : MonoBehaviour
         float targetSpeed = verticalInput * acceleration;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 5f);
 
-        // Lưu ý: Tùy phiên bản Unity, dùng sphere.velocity thay vì linearVelocity cho an toàn
         Vector3 currentVelocity = sphere != null ? sphere.linearVelocity : Vector3.zero;
-        
+
         // Xác định xe đang tiến hay lùi dựa trên vector vận tốc thực tế
         float moveDirection = Vector3.Dot(transform.forward, currentVelocity) >= 0 ? 1f : -1f;
 
