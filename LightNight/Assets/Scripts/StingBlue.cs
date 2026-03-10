@@ -11,7 +11,6 @@ public class StingBlue : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                player.addCurrentSpeed(200);
                 Destroy(gameObject);
                 
             }
