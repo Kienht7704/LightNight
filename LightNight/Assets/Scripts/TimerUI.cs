@@ -7,7 +7,7 @@ public class TimerUI : MonoBehaviour
     public static TimerUI Instance;
 
     [Header("Giao diện UI")]
-    public TextMeshProUGUI timerText; // Kéo TxtTimer vào đây
+    public TextMeshProUGUI timerText;
 
     private float currentTime = 0f;
     private bool isTimerRunning = false;
