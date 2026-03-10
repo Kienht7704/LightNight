@@ -1,7 +1,8 @@
 using UnityEngine;
+using Unity.Netcode;
 
 [RequireComponent(typeof(Rigidbody))]
-public class VehicleController : MonoBehaviour
+public class VehicleController : NetworkBehaviour
 {
     [Header("Bánh xe (Wheel Colliders)")]
     public WheelCollider flCollider; // Bánh trước trái
@@ -57,6 +58,8 @@ public class VehicleController : MonoBehaviour
 
     void Update()
     {
+        if (!IsOwner) return;
+
         // 1. Nhận lệnh từ người chơi
         _vInput = Input.GetAxis("Vertical");   // W/S
         _hInput = Input.GetAxis("Horizontal"); // A/D
@@ -71,6 +74,8 @@ public class VehicleController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         HandleSteering();
         HandleMotorAndSpeed();
         HandleBrakingAndInertia();

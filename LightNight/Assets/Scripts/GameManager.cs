@@ -4,7 +4,7 @@ public class Record
 {
     public string userId;
     public string userName;
-    public Time endTime;
+    public float endTime;
 }
 
 public class GameManager
