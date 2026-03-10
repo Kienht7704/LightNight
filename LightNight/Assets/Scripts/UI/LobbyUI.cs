@@ -376,7 +376,11 @@ public class LobbyUI : MonoBehaviour
         {
             if (_loader == null) _loader = new GameObject("LoaderUI").AddComponent<LoadingScreenUI>();
             bool isHost = Unity.Netcode.NetworkManager.Singleton.IsServer;
-            _loader.ShowLoadingForNetwork(isHost, LobbyManager.Instance.LocalPlayerName);
+            
+            if (!_isCountingDown)
+            {
+                _loader.ShowLoadingForNetwork(isHost, LobbyManager.Instance.LocalPlayerName);
+            }
             
             if (_roomRoot) _roomRoot.SetActive(false);
             if (_lobbyRoot) _lobbyRoot.SetActive(false);
@@ -489,20 +493,26 @@ public class LobbyUI : MonoBehaviour
         if (_startBtn) _startBtn.interactable = false;
         if (_readyBtn) _readyBtn.interactable = false;
 
-        for (int i = 5; i > 0; i--)
-        {
-            if (_roomCodeText) _roomCodeText.text = $"SẼ BẮT ĐẦU TRONG: {i}";
-            yield return new WaitForSeconds(1f);
-        }
+        if (_loader == null) _loader = new GameObject("LoaderUI").AddComponent<LoadingScreenUI>();
+        bool isHost = Unity.Netcode.NetworkManager.Singleton.IsServer;
         
-        if (_roomCodeText) _roomCodeText.text = "ĐANG TẢI ĐƯỜNG ĐUA...";
+        _loader.ShowLoadingForNetwork(isHost, LobbyManager.Instance.LocalPlayerName);
+        if (_roomRoot) _roomRoot.SetActive(false);
+        if (_lobbyRoot) _lobbyRoot.SetActive(false);
+        if (_joinRoot) _joinRoot.SetActive(false);
+
+        float elapsed = 0f;
+        while (elapsed < 5f)
+        {
+            elapsed += Time.deltaTime;
+            _loader.SetProgress(elapsed / 5f);
+            yield return null;
+        }
+
         yield return new WaitForSeconds(1f);
 
-        if (Unity.Netcode.NetworkManager.Singleton.IsServer)
+        if (isHost)
         {
-            if (_loader == null) _loader = new GameObject("LoaderUI").AddComponent<LoadingScreenUI>();
-            _loader.ShowLoadingForNetwork(true, LobbyManager.Instance.LocalPlayerName);
-            _roomRoot.SetActive(false);
             Unity.Netcode.NetworkManager.Singleton.SceneManager.LoadScene(raceSceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
     }
