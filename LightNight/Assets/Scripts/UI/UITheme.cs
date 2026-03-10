@@ -26,7 +26,7 @@ public static class UITheme
     public static readonly Color TagBorder     = new Color32(200, 0, 10, 76);
 
     // ===== FONT SIZES =====
-    public const float TitleSize    = 68f;
+    public const float TitleSize    = 60f;
     public const float HeadingSize  = 38f;
     public const float SubtitleSize = 22f;
     public const float ButtonSize   = 20f;

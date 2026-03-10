@@ -157,7 +157,7 @@ public class LobbyUI : MonoBehaviour
         var pre = UITheme.MakeText(ct.transform, "P", "- SÀI GÒN RACING -", UITheme.TinySize, UITheme.TextGold);
         pre.characterSpacing = 4f; UITheme.PH(pre.gameObject, 16f);
 
-        _titleText = UITheme.MakeText(ct.transform, "T", "LIGHT\nNIGHT", UITheme.TitleSize, UITheme.RoyalGold);
+        _titleText = UITheme.MakeText(ct.transform, "T", "LIGHT NIGHT", UITheme.TitleSize, UITheme.RoyalGold);
         _titleText.fontStyle = FontStyles.Bold; _titleText.lineSpacing = 0f; 
         UITheme.PH(_titleText.gameObject, 140f);
 
