@@ -52,10 +52,16 @@ public class Player : MonoBehaviour
     // =====================================================================
     private float currentSpeed;     
     private float currentRotate;    
-    
+
+    public void addCurrentSpeed(float addSpeed)
+    {
+        currentSpeed += addSpeed;
+    }
+
     // Hai biến mới để quản lý phép xoay an toàn (Tránh lỗi Gimbal Lock)
     private float wheelRollAngle = 0f;      // Tích lũy góc lăn lốp xe
     private float frontWheelSteerAngle = 0f;// Góc bẻ lái hiện tại của lốp trước
+
 
     // =====================================================================
     // START
