@@ -12,8 +12,14 @@ EditorBuildSettings:
     path: Assets/Scenes/InGameUI.unity
     guid: 1b80df850efc5434b986226523d4fb2e
   - enabled: 1
-    path: Assets/Scenes/Prototype 1.unity
-    guid: 84729eeda748340d0955715b6a50b370
+    path: Assets/Scenes/LoobyScene.unity
+    guid: 5e3888c2ac3c2a44784a3a54c14164d1
+  - enabled: 1
+    path: Assets/Scenes/LoadingScreen.unity
+    guid: 8392a44a4ec2b204cad28e85d99c3320
+  - enabled: 1
+    path: Assets/Scenes/InGameMenu.unity
+    guid: dcd697b42916f7f4d914369d84d64689
   - enabled: 0
     path: Assets/Scenes/Prototype 2.unity
     guid: 956394da611bf2847afdbe5616c01a4a
